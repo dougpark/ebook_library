@@ -14,39 +14,95 @@ window.addEventListener("DOMContentLoaded", () => {
             , 3000);
     }
 
-    // Filter table rows
+    let selectedCategory = "";
     const searchBox = document.getElementById("searchBox");
     const clearBtn = document.getElementById("clearSearch");
+    const categoryLinks = document.querySelectorAll(".category-link");
 
-    searchBox.addEventListener("keyup", function () {
-        const filter = this.value.toLowerCase();
+    // Search/filter logic
+    function filterCards(filter, category) {
         const cards = document.querySelectorAll(".ebook-card");
-
         cards.forEach(card => {
             const title = card.querySelector(".ebook-title").innerText.toLowerCase();
             const author = card.querySelector(".ebook-author").innerText.toLowerCase();
             const date = card.querySelector(".ebook-date").innerText.toLowerCase();
-            const category = card.querySelector(".ebook-category")
+            const categoryText = card.querySelector(".ebook-category")
                 ? card.querySelector(".ebook-category").innerText.toLowerCase()
                 : "";
             const notes = card.querySelector(".ebook-notes")
                 ? card.querySelector(".ebook-notes").innerText.toLowerCase()
                 : "";
-            const match =
+
+            const matchesFilter =
                 title.includes(filter) ||
                 author.includes(filter) ||
                 date.includes(filter) ||
-                category.includes(filter) ||
+                categoryText.includes(filter) ||
                 notes.includes(filter);
-            card.style.display = match ? "" : "none";
+
+            const matchesCategory =
+                !category || category === "all" || categoryText === category;
+
+            card.style.display = (matchesFilter && matchesCategory) ? "" : "none";
+        });
+    }
+
+    function refreshCategoryList() {
+        fetch('/categories')
+            .then(response => response.json())
+            .then(categories => {
+                const categoryList = document.getElementById('categoryList');
+                categoryList.innerHTML = '<li><a href="#" class="category-link">All</a></li>';
+                categories.forEach(category => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a href="#" class="category-link">${category}</a>`;
+                    categoryList.appendChild(li);
+                });
+
+                // Re-attach click event listeners to new category links
+                const newCategoryLinks = categoryList.querySelectorAll('.category-link');
+                newCategoryLinks.forEach(link => {
+                    link.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        selectedCategory = this.textContent.trim().toLowerCase();
+                        filterCards(searchBox.value.toLowerCase(), selectedCategory);
+
+                        // Highlight selected category
+                        newCategoryLinks.forEach(l => l.classList.remove("selected"));
+                        this.classList.add("selected");
+                    });
+                });
+            });
+    }
+
+    // Search box event
+    searchBox.addEventListener("keyup", function () {
+        const filter = this.value.toLowerCase();
+        filterCards(filter, selectedCategory);
+    });
+
+    // Clear button event
+    clearBtn.addEventListener("click", function () {
+        searchBox.value = "";
+        searchBox.dispatchEvent(new Event("keyup"));
+        searchBox.focus();
+    });
+
+    // Category click event
+    categoryLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
+            selectedCategory = this.textContent.trim().toLowerCase();
+            filterCards(searchBox.value.toLowerCase(), selectedCategory);
+
+            // Optional: highlight selected category
+            categoryLinks.forEach(l => l.classList.remove("selected"));
+            this.classList.add("selected");
         });
     });
 
-    clearBtn.addEventListener("click", function () {
-        searchBox.value = "";
-        searchBox.dispatchEvent(new Event("keyup")); // Trigger filter
-        searchBox.focus();
-    });
+    // Initial filter
+    filterCards("", "");
 
 
 
@@ -94,6 +150,7 @@ window.addEventListener("DOMContentLoaded", () => {
                         saveBtn.textContent = 'Saved!';
                         setTimeout(() => saveBtn.textContent = 'Save', 1500);
                         saveBtn.disabled = true; // Disable again after save
+                        refreshCategoryList(); // Refresh category list after save
                     } else {
                         saveBtn.textContent = 'Error!';
                         setTimeout(() => saveBtn.textContent = 'Save', 1500);

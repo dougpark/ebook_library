@@ -184,7 +184,7 @@ a {
 }
 
 #searchBox {
-  padding-right: 28px; /* space for clear button */
+  padding-right: 20px; /* space for clear button */
 }
 
 .clear-btn {
@@ -204,12 +204,24 @@ a {
   display: inline;
 }
 
+#sidebar .search-wrapper {
+  width: 100%;
+  max-width: 220px; /* slightly less than sidebar width */
+  margin: 0 auto;
+}
+
+#sidebar #searchBox {
+  width: 100%;
+  max-width: 220px;
+  box-sizing: border-box;
+}
+
 /* Sidebar styles */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 240px;
+  width: 200px;
   height: 100%;
   background: var(--table-bg, #222);
   color: var(--text-color, #fff);
@@ -236,7 +248,6 @@ a {
 }
 
 .main-content {
-  margin-left: 290px; /* Same as sidebar width */
   transition: margin-left 0.3s ease;
 }
 
@@ -249,6 +260,16 @@ a {
 .sidebar.closed + .main-content,
 .main-content.sidebar-closed {
   margin-left: 0 !important;
+}
+
+/* Hide openSidebar button when sidebar is active (open) */
+.sidebar.active ~ .main-content .sidebar-open {
+  display: none;
+}
+
+/* Show openSidebar button when sidebar is closed */
+.sidebar.closed ~ .main-content .sidebar-open {
+  display: block;
 }
 
 /* Responsive: stack sidebar on top for mobile */
@@ -291,6 +312,13 @@ a {
 
 .category-link:hover {
   background: var(--editable-bg, #333);
+}
+
+.category-link.selected {
+  background: var(--action-bg, #ffc107);
+  color: #222;
+  font-weight: bold;
+  border-radius: 4px;
 }
 
 :root {

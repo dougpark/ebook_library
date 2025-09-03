@@ -88,3 +88,12 @@ class MetadataDB:
             }
             for r in rows
         ]
+
+    def get_all_categories(self):
+        """Retrieve a list of all distinct categories."""
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT DISTINCT category FROM ebooks WHERE category IS NOT NULL AND category != '' ORDER BY category")
+        categories = [row[0] for row in c.fetchall()]
+        conn.close()
+        return categories

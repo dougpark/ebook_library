@@ -11,28 +11,33 @@
 <body class="dark-theme">
     <div id="sidebar" class="sidebar active">
         <button id="closeSidebar" class="sidebar-close">&times;</button>
+
+        <h2>Library</h2>
         <div>
             <a href="{{ url_for('reindex') }}" class="action-btn">Re-Index Ebooks</a>
         </div>
+        <h2>Search</h2>
+        <div>
+            <div class="search-wrapper">
+                <input type="text" id="searchBox" placeholder="Search for anything...">
+                <span id="clearSearch" class="clear-btn" title="Clear">&times;</span>
+            </div>
+        </div>
         <h2>Categories</h2>
         <ul id="categoryList">
-            <!-- Example categories; replace with dynamic list if needed -->
             <li><a href="#" class="category-link">All</a></li>
-            <li><a href="#" class="category-link">Fiction</a></li>
-            <li><a href="#" class="category-link">Non-Fiction</a></li>
-            <li><a href="#" class="category-link">Science</a></li>
-            <li><a href="#" class="category-link">History</a></li>
+            {% for category in categories %}
+            <li><a href="#" class="category-link">{{ category }}</a></li>
+            {% endfor %}
         </ul>
     </div>
     <div id="mainContent" class="main-content">
-        <button id="openSidebar" class="sidebar-open">&#9776; Categories</button>
+        <button id="openSidebar" class="sidebar-open">&#9776; Menu</button>
+
         <h1>Ebook Library</h1>
         <div class="top-bar">
 
-            <div class="search-wrapper">
-                <input type="text" id="searchBox" placeholder="Search by title, category, and more...">
-                <span id="clearSearch" class="clear-btn" title="Clear">&times;</span>
-            </div>
+
         </div>
 
         {% with messages=get_flashed_messages() %}
