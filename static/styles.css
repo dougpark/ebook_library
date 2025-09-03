@@ -342,8 +342,13 @@ a {
 .category-link.selected {
   background: var(--action-bg, #ffc107);
   color: #222;
-  font-weight: bold;
+  font-weight: normal;
   border-radius: 4px;
+}
+
+.category-link.selected .category-count {
+  color: #222; /* Match the selected text color */
+  font-weight: normal;
 }
 
 .category-count {
