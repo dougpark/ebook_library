@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Ebook Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+
+<body class="dark-theme">
+    <div id="sidebar" class="sidebar active">
+        <button id="closeSidebar" class="sidebar-close">&times;</button>
+        <div>
+            <a href="{{ url_for('reindex') }}" class="action-btn">Re-Index Ebooks</a>
+        </div>
+        <h2>Categories</h2>
+        <ul id="categoryList">
+            <!-- Example categories; replace with dynamic list if needed -->
+            <li><a href="#" class="category-link">All</a></li>
+            <li><a href="#" class="category-link">Fiction</a></li>
+            <li><a href="#" class="category-link">Non-Fiction</a></li>
+            <li><a href="#" class="category-link">Science</a></li>
+            <li><a href="#" class="category-link">History</a></li>
+        </ul>
+    </div>
+    <div id="mainContent" class="main-content">
+        <button id="openSidebar" class="sidebar-open">&#9776; Categories</button>
+        <h1>Ebook Library</h1>
+        <div class="top-bar">
+
+            <div class="search-wrapper">
+                <input type="text" id="searchBox" placeholder="Search by title, category, and more...">
+                <span id="clearSearch" class="clear-btn" title="Clear">&times;</span>
+            </div>
+        </div>
+
+        {% with messages=get_flashed_messages() %}
+
+        {% if messages %}
+
+        {% for message in messages %}
+
+        <div class="flash {% if 'successfully' in message %}success{% else %}info{% endif %}">
+            {{message}}
+
+        </div>
+        {% endfor %}
+
+        {% endif %}
+
+        {% endwith %}
+
+        <div id="ebookList">
+            {% for ebook in ebooks %}
+            <div class="ebook-card" data-code="{{ ebook.metadata.code }}">
+                <div class="ebook-info">
+                    <div class="ebook-title editable" contenteditable="true">{{ ebook.metadata.title }}</div>
+                    <div class="ebook-meta-row">
+                        <div class="ebook-author editable" contenteditable="true">{{ ebook.metadata.author }}</div>
+                        <div class="ebook-date editable" contenteditable="true">{{ ebook.metadata.date_published }}
+                        </div>
+                        <div class="ebook-category editable" contenteditable="true">{{ ebook.metadata.category }}</div>
+                    </div>
+
+                    <div class="ebook-notes editable" contenteditable="true">{{ ebook.metadata.notes }}</div>
+                </div>
+                <div class="ebook-actions">
+                    <a href="{{ url_for('download', rel_path=ebook.relative_path) }}" class="download-btn">Download</a>
+                    <button class="save-btn">Save</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+
+</html>

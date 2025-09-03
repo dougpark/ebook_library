@@ -1,0 +1,340 @@
+/* General page */
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.top-bar {
+  margin-bottom: 20px;
+}
+
+input[type="text"] {
+  padding: 6px;
+  width: 300px;
+  margin-left: 10px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
+  border-radius: 5px;
+}
+
+/* Flash messages */
+.flash {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.flash.success {
+  background: #28a745;
+  color: white;
+  border: none;
+}
+
+.flash.info {
+  background: #17a2b8;
+  color: white;
+  border: none;
+}
+
+/* Table */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  background-color: var(--table-bg);
+}
+
+th,
+td {
+  padding: 8px 12px;
+  border: 1px solid #333;
+}
+
+th {
+  background-color: var(--table-header-bg);
+  cursor: pointer;
+}
+
+tr:nth-child(even) {
+  background-color: var(--table-alt-bg);
+}
+
+tr:nth-child(odd) {
+  background-color: var(--table-bg);
+}
+
+td[contenteditable="true"] {
+  background-color: var(--editable-bg);
+  color: var(--text-color);
+  border-radius: 3px;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Buttons */
+.save-btn,
+.download-btn,
+.action-btn {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 5px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+.save-btn {
+  background: #28a745;
+}
+.save-btn:hover {
+  background: #218838;
+}
+
+.save-btn:disabled {
+  background: #6c757d;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.download-btn {
+  background: #17a2b8;
+}
+.download-btn:hover {
+  background: #117a8b;
+  text-decoration: none;
+}
+
+.action-btn {
+  background: #ffc107;
+  color: #212529;
+}
+.action-btn:hover {
+  background: #e0a800;
+  text-decoration: none;
+}
+
+/* Hide the first column (File) in the ebook table */
+#ebookTable th:first-child,
+#ebookTable td:first-child {
+    display: none;
+}
+
+#ebookList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ebook-card {
+  background: var(--table-bg);
+  color: var(--text-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 16px;
+  flex: 1 1 300px;
+  min-width: 250px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ebook-info {
+  margin-bottom: 12px;
+}
+
+.ebook-title, .ebook-author, .ebook-date {
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.ebook-meta-row {
+  display: flex;
+  gap: 12px;
+}
+
+.ebook-author,
+.ebook-category,
+.ebook-date {
+  max-width: 25ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ebook-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Search box */
+.search-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+#searchBox {
+  padding-right: 28px; /* space for clear button */
+}
+
+.clear-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  user-select: none;
+  display: none; /* hidden by default */
+}
+
+#searchBox:not(:placeholder-shown) + .clear-btn,
+#searchBox:focus + .clear-btn {
+  display: inline;
+}
+
+/* Sidebar styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100%;
+  background: var(--table-bg, #222);
+  color: var(--text-color, #fff);
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+  transition: width 0.3s ease;
+  padding: 24px 16px 16px 16px;
+  overflow-y: auto;
+}
+
+.sidebar.closed {
+  width: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.main-content.sidebar-closed {
+  margin-left: 0 !important;
+}
+
+.sidebar:not(.active) {
+  width: 60px; /* Collapsed width */
+}
+
+.main-content {
+  margin-left: 290px; /* Same as sidebar width */
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.active + .main-content,
+.sidebar + .main-content {
+  margin-left: 240px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.closed + .main-content,
+.main-content.sidebar-closed {
+  margin-left: 0 !important;
+}
+
+/* Responsive: stack sidebar on top for mobile */
+@media (max-width: 700px) {
+  .sidebar,
+  .sidebar.active,
+  .sidebar.closed {
+    width: 80vw;
+    left: 0;
+  }
+  .sidebar:not(.active) {
+    left: -80vw;
+  }
+  .main-content,
+  .sidebar.active + .main-content,
+  .sidebar + .main-content {
+    margin-left: 0 !important;
+  }
+}
+
+#categoryList {
+  list-style: none;
+  padding: 0;
+  margin: 32px 0 0 0;
+}
+
+#categoryList li {
+  margin-bottom: 12px;
+}
+
+.category-link {
+  color: inherit;
+  text-decoration: none;
+  font-size: 1.1rem;
+  padding: 4px 0;
+  display: block;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+.category-link:hover {
+  background: var(--editable-bg, #333);
+}
+
+:root {
+  /* Light theme colors */
+  --bg-color: #f5f5f5;
+  --text-color: #212121;
+  --input-bg: #fff;
+  --input-border: #ccc;
+  --table-bg: #fff;
+  --table-alt-bg: #f0f0f0;
+  --table-header-bg: #e0e0e0;
+  --editable-bg: #e0e0e0;
+  --success-bg: #28a745;
+  --info-bg: #17a2b8;
+  --action-bg: #ffc107;
+  --action-hover-bg: #e0a800;
+  --download-bg: #17a2b8;
+  --download-hover-bg: #117a8b;
+  --save-bg: #28a745;
+  --save-hover-bg: #218838;
+}
+
+body.dark-theme {
+  /* Dark theme overrides */
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --input-bg: #1f1f1f;
+  --input-border: #444;
+  --table-bg: #1e1e1e;
+  --table-alt-bg: #1a1a1a;
+  --table-header-bg: #2c2c2c;
+  --editable-bg: #2c2c2c;
+  /* Button colors remain the same for consistency */
+}
+
+@media (max-width: 300px) {
+  #ebookList {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ebook-card {
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+    padding: 12px;
+  }
+}

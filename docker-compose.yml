@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  ebook-library:
+    build: .
+    container_name: ebook_library
+    ports:
+      - "5100:5100"
+    volumes:
+      - ./:/app
+      - ./ebooks:/app/ebooks # Folder containing your ebooks
+      - ./metadata.db:/app/metadata.db # Persist your database
+      - ./static:/app/static # Persist static files
+      - ./templates:/app/templates # Persist templates
+    restart: unless-stopped
