@@ -97,3 +97,18 @@ class MetadataDB:
         categories = [row[0] for row in c.fetchall()]
         conn.close()
         return categories
+
+    def get_all_categories_with_counts(self):
+        """Retrieve a list of all distinct categories with the count of ebooks in each category."""
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("""
+            SELECT category, COUNT(*) 
+            FROM ebooks 
+            WHERE category IS NOT NULL AND category != '' 
+            GROUP BY category
+            ORDER BY category
+        """)
+        categories = [{"name": row[0], "count": row[1]} for row in c.fetchall()]
+        conn.close()
+        return categories

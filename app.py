@@ -23,8 +23,10 @@ metadata = MetadataDB()
 @app.route("/")
 def index():
     ebooks = scanner.scan_folder(EBOOK_FOLDER)
-    categories = metadata.get_all_categories()  # Add this method to MetadataDB
-    return render_template("index.html", ebooks=ebooks, categories=categories)
+    categories = metadata.get_all_categories_with_counts()
+    # Calculate total count for "All"
+    total_count = sum(cat["count"] for cat in categories)
+    return render_template("index.html", ebooks=ebooks, categories=categories, total_count=total_count)
 
 @app.route("/edit/<code>", methods=["GET", "POST"])
 def edit(code):
@@ -85,13 +87,13 @@ def reindex():
     if renamed_files:
         flash(f"{len(renamed_files)} new ebooks indexed successfully ✅")
     else:
-        flash("No new ebooks found to index ℹ️")
+        flash("No new ebooks found to index")
 
     return redirect(url_for("index"))
 
 @app.route("/categories")
 def categories():
-    categories = metadata.get_all_categories()
+    categories = metadata.get_all_categories_with_counts()
     return jsonify(categories)
 
 if __name__ == "__main__":
