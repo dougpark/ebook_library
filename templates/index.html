@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>Ebook Library</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 </head>
 
@@ -43,8 +44,11 @@
 
         <h1>Ebook Library</h1>
         <div class="top-bar">
-
-
+            <div class="top-right">
+                <button class="highlight-btn" title="Settings">
+                    <span class="material-icons">settings</span>
+                </button>
+            </div>
         </div>
 
         {% with messages=get_flashed_messages() %}
