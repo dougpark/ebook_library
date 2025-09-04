@@ -30,6 +30,10 @@
                 <button class="dropdown-item" id="sortCategory"
                     style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Sort
                     by Category</button>
+                <hr style="margin:8px 0;border:none;border-top:1px solid #444;">
+                <button class="dropdown-item" id="themeToggle"
+                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Theme:
+                    <span id="themeLabel">Dark</span></button>
             </div>
         </div>
     </div>
@@ -83,8 +87,28 @@
                 {% for ebook in ebooks %}
                 <div class="ebook-card" data-code="{{ ebook.metadata.code }}">
                     <div class="ebook-info">
-                        <div class="ebook-title editable" contenteditable="true" data-placeholder="Title">{{
-                            ebook.metadata.title }}</div>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div class="ebook-title editable" contenteditable="true" data-placeholder="Title"
+                                style="flex:1;">{{
+                                ebook.metadata.title }}</div>
+                            <span class="file-info" style="flex-shrink:0;display:flex;align-items:center;">
+                                {% if ebook.file_ext == 'pdf' %}
+                                <span class="material-icons" title="PDF"
+                                    style="vertical-align:middle;color:var(--text-color,#e0e0e0);font-size:1.2em;">picture_as_pdf</span>
+                                {% elif ebook.file_ext == 'epub' %}
+                                <span class="material-icons" title="EPUB"
+                                    style="vertical-align:middle;color:var(--text-color,#e0e0e0);font-size:1.2em;">menu_book</span>
+                                {% else %}
+                                <span class="material-icons" title="File"
+                                    style="vertical-align:middle;color:var(--text-color,#e0e0e0);font-size:1.2em;">insert_drive_file</span>
+                                {% endif %}
+                                <span class="file-size" style="font-size:0.95em;color:#888;margin-left:4px;">
+                                    {{ (ebook.file_size // 1000000)|string + 'm' if ebook.file_size >= 1000000 else
+                                    (ebook.file_size // 1000)|string + 'k' if ebook.file_size >= 1000 else
+                                    ebook.file_size|string + 'b' }}
+                                </span>
+                            </span>
+                        </div>
                         <!-- <div class="ebook-meta-row"> -->
                         <div class="ebook-author editable" contenteditable="true" data-placeholder="Author">{{
                             ebook.metadata.author }}</div>
@@ -107,6 +131,30 @@
             </div>
         </div>
         <script src="{{ url_for('static', filename='main.js') }}"></script>
+        <script>
+            // Theme switching logic
+            function setTheme(theme) {
+                document.body.classList.remove('dark-theme', 'light-theme');
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-theme');
+                    document.getElementById('themeLabel').textContent = 'Dark';
+                } else {
+                    document.body.classList.add('light-theme');
+                    document.getElementById('themeLabel').textContent = 'Light';
+                }
+                localStorage.setItem('theme', theme);
+            }
+            // On load, set theme from localStorage or default to dark
+            (function () {
+                var theme = localStorage.getItem('theme') || 'dark';
+                setTheme(theme);
+            })();
+            document.getElementById('themeToggle').addEventListener('click', function (e) {
+                var current = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+                var next = current === 'dark' ? 'light' : 'dark';
+                setTheme(next);
+            });
+        </script>
         <script>
             // Auto-save all metadata fields on blur
             function refreshCategories() {
@@ -131,7 +179,13 @@
             document.querySelectorAll('.ebook-card').forEach(card => {
                 const code = card.getAttribute('data-code');
                 card.querySelectorAll('.editable').forEach(field => {
+                    let originalValue = '';
+                    field.addEventListener('focus', function () {
+                        originalValue = field.textContent.trim();
+                    });
                     field.addEventListener('blur', function () {
+                        const currentValue = field.textContent.trim();
+                        if (currentValue === originalValue) return; // No change, skip update
                         // Collect all metadata fields from this card
                         const title = card.querySelector('.ebook-title')?.textContent.trim() || '';
                         const author = card.querySelector('.ebook-author')?.textContent.trim() || '';
@@ -153,6 +207,9 @@
                                 notes: notes
                             })
                         }).then(res => res.json()).then(data => {
+                            // Sparkle animation for field
+                            field.classList.add('sparkle-animate');
+                            setTimeout(() => field.classList.remove('sparkle-animate'), 700);
                             // Optionally show feedback
                             if (field.classList.contains('ebook-category')) {
                                 refreshCategories();

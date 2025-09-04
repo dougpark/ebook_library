@@ -67,10 +67,15 @@ class LibraryScanner:
                             "notes": notes
                         }
 
+                    file_path_full = os.path.join(root, file)
+                    file_size = os.path.getsize(file_path_full)
+                    ext = os.path.splitext(file)[1][1:].lower()
                     results.append({
-                        "file_path": os.path.join(root, file),
+                        "file_path": file_path_full,
                         "relative_path": rel_path.replace("\\", "/"),  # safe for web
                         "file_name": file,
+                        "file_ext": ext,
+                        "file_size": file_size,
                         "metadata": metadata
                     })
         return results
