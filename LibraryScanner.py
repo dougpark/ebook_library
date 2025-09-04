@@ -1,9 +1,11 @@
+
 import os
 import re
 import sqlite3
+from MetadataDB import METADATA_DB_FILENAME
 
 class LibraryScanner:
-    def __init__(self, metadata_db="metadata.db"):
+    def __init__(self, metadata_db=METADATA_DB_FILENAME):
         self.metadata_db = metadata_db
         self.code_pattern = re.compile(r"_([A-Z]{5})\.(pdf|epub)$", re.IGNORECASE)
 

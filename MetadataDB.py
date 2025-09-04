@@ -1,8 +1,15 @@
 import sqlite3
 
+METADATA_DB_FILENAME = "ebook_metadata.db"
+
 class MetadataDB:
-    def __init__(self, db_file="metadata.db"):
+    def __init__(self, db_file=METADATA_DB_FILENAME):
+        import os
         self.db_file = db_file
+        # Safety check: remove directory if it exists
+        if os.path.isdir(self.db_file):
+            import shutil
+            shutil.rmtree(self.db_file)
         self._init_db()
 
     def _init_db(self):
@@ -18,6 +25,7 @@ class MetadataDB:
                 category TEXT,
                 notes TEXT
             )
+        
         """)
         # Add new columns if they don't exist (for migrations)
         c.execute("PRAGMA table_info(ebooks)")
