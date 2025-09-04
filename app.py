@@ -8,6 +8,7 @@ from CodeGenerator import CodeGenerator
 from MetadataDB import MetadataDB
 import os
 
+VERSION = "1.0"
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # 🔑 required for flash messages
 
@@ -27,7 +28,7 @@ def index():
     categories = metadata.get_all_categories_with_counts()
     # Calculate total count for "All"
     total_count = sum(cat["count"] for cat in categories)
-    return render_template("index.html", ebooks=ebooks, categories=categories, total_count=total_count)
+    return render_template("index.html", ebooks=ebooks, categories=categories, total_count=total_count, version=VERSION)
 
 @app.route("/edit/<code>", methods=["GET", "POST"])
 def edit(code):
