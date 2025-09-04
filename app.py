@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, send_from_directory, redirect, url_for, flash
 from flask import request
 from flask import jsonify
@@ -95,6 +96,12 @@ def reindex():
 def categories():
     categories = metadata.get_all_categories_with_counts()
     return jsonify(categories)
+
+@app.route("/categories_list")
+def categories_list():
+    categories = metadata.get_all_categories_with_counts()
+    total_count = sum(cat["count"] for cat in categories)
+    return jsonify({"categories": categories, "total_count": total_count})
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5100)

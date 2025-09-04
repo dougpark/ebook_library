@@ -12,10 +12,25 @@
 <body class="dark-theme">
     <div class="top-bar responsive-bar">
         <div class="bar-title">Ebook Library</div>
-        <div class="bar-actions">
-            <button class="highlight-btn" title="Settings">
+        <div class="bar-actions" style="position:relative;">
+            <button class="highlight-btn" id="settingsBtn" title="Settings" aria-haspopup="true" aria-expanded="false">
                 <span class="material-icons">settings</span>
             </button>
+            <div id="settingsDropdown" class="dropdown-menu"
+                style="display:none; position:absolute; right:0; top:48px; min-width:160px; background:#222; color:#fff; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.15); z-index:100; font-size:1.5rem;">
+                <button class="dropdown-item" id="sortTitle"
+                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Sort
+                    by Title</button>
+                <button class="dropdown-item" id="sortAuthor"
+                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Sort
+                    by Author</button>
+                <button class="dropdown-item" id="sortDate"
+                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Sort
+                    by Date</button>
+                <button class="dropdown-item" id="sortCategory"
+                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Sort
+                    by Category</button>
+            </div>
         </div>
     </div>
     <div class="layout-row">
@@ -86,13 +101,127 @@
                     <div class="ebook-actions">
                         <a href="{{ url_for('download', rel_path=ebook.relative_path) }}"
                             class="download-btn">Download</a>
-                        <button class="save-btn">Update</button>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
         <script src="{{ url_for('static', filename='main.js') }}"></script>
+        <script>
+            // Auto-save all metadata fields on blur
+            function refreshCategories() {
+                fetch('/categories_list')
+                    .then(res => res.json())
+                    .then(data => {
+                        const list = document.getElementById('categoryList');
+                        if (!list) return;
+                        list.innerHTML = '';
+                        // Add 'All' category
+                        const allLi = document.createElement('li');
+                        allLi.innerHTML = `<a href="#" class="category-link">All <span class="category-count">(${data.total_count})</span></a>`;
+                        list.appendChild(allLi);
+                        // Add other categories
+                        data.categories.forEach(cat => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<a href="#" class="category-link">${cat.name} <span class="category-count">(${cat.count})</span></a>`;
+                            list.appendChild(li);
+                        });
+                    });
+            }
+            document.querySelectorAll('.ebook-card').forEach(card => {
+                const code = card.getAttribute('data-code');
+                card.querySelectorAll('.editable').forEach(field => {
+                    field.addEventListener('blur', function () {
+                        // Collect all metadata fields from this card
+                        const title = card.querySelector('.ebook-title')?.textContent.trim() || '';
+                        const author = card.querySelector('.ebook-author')?.textContent.trim() || '';
+                        const date = card.querySelector('.ebook-date')?.textContent.trim() || '';
+                        const category = card.querySelector('.ebook-category')?.textContent.trim() || '';
+                        const notes = card.querySelector('.ebook-notes')?.textContent.trim() || '';
+                        fetch('/update_metadata', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                code: code,
+                                title: title,
+                                author: author,
+                                date: date,
+                                category: category,
+                                notes: notes
+                            })
+                        }).then(res => res.json()).then(data => {
+                            // Optionally show feedback
+                            if (field.classList.contains('ebook-category')) {
+                                refreshCategories();
+                            }
+                        });
+                    });
+                });
+            });
+            // Dropdown menu logic
+            const settingsBtn = document.getElementById('settingsBtn');
+            const dropdown = document.getElementById('settingsDropdown');
+            settingsBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                settingsBtn.setAttribute('aria-expanded', dropdown.style.display === 'block');
+            });
+            document.addEventListener('click', function (e) {
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                    settingsBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Sorting logic
+            function sortCards(by) {
+                const list = document.getElementById('ebookList');
+                const cards = Array.from(list.getElementsByClassName('ebook-card'));
+                cards.sort((a, b) => {
+                    let aVal, bVal;
+                    if (by === 'title') {
+                        aVal = a.querySelector('.ebook-title')?.textContent.trim().toLowerCase() || '';
+                        bVal = b.querySelector('.ebook-title')?.textContent.trim().toLowerCase() || '';
+                    } else if (by === 'author') {
+                        aVal = a.querySelector('.ebook-author')?.textContent.trim().toLowerCase() || '';
+                        bVal = b.querySelector('.ebook-author')?.textContent.trim().toLowerCase() || '';
+                    } else if (by === 'date') {
+                        aVal = a.querySelector('.ebook-date')?.textContent.trim() || '';
+                        bVal = b.querySelector('.ebook-date')?.textContent.trim() || '';
+                        let aDate = Date.parse(aVal);
+                        let bDate = Date.parse(bVal);
+                        if (!isNaN(aDate) && !isNaN(bDate)) {
+                            return aDate - bDate;
+                        }
+                        return aVal.localeCompare(bVal);
+                    } else if (by === 'category') {
+                        aVal = a.querySelector('.ebook-category')?.textContent.trim().toLowerCase() || '';
+                        bVal = b.querySelector('.ebook-category')?.textContent.trim().toLowerCase() || '';
+                    }
+                    return aVal.localeCompare(bVal);
+                });
+                cards.forEach(card => list.appendChild(card));
+            }
+            document.getElementById('sortTitle').addEventListener('click', function (e) {
+                sortCards('title');
+                dropdown.style.display = 'none';
+            });
+            document.getElementById('sortAuthor').addEventListener('click', function (e) {
+                sortCards('author');
+                dropdown.style.display = 'none';
+            });
+            document.getElementById('sortDate').addEventListener('click', function (e) {
+                sortCards('date');
+                dropdown.style.display = 'none';
+            });
+            document.getElementById('sortCategory').addEventListener('click', function (e) {
+                sortCards('category');
+                dropdown.style.display = 'none';
+            });
+        </script>
 </body>
 
 </html>

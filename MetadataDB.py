@@ -41,14 +41,35 @@ class MetadataDB:
         conn.close()
 
     def update_entry(self, code: str, title: str, author: str, date_published: str, category: str = None, notes: str = None):
-        """Update an existing ebook entry in the metadata database."""
+        """Update only non-empty fields for an ebook entry in the metadata database."""
         conn = sqlite3.connect(self.db_file)
         c = conn.cursor()
+        # Get current values
+        c.execute("SELECT title, author, date_published, category, notes FROM ebooks WHERE code = ?", (code,))
+        row = c.fetchone()
+        if not row:
+            conn.close()
+            return
+        current = {
+            "title": row[0],
+            "author": row[1],
+            "date_published": row[2],
+            "category": row[3],
+            "notes": row[4]
+        }
+        # Only update fields that are not empty
+        new_values = {
+            "title": title if title else current["title"],
+            "author": author if author else current["author"],
+            "date_published": date_published if date_published else current["date_published"],
+            "category": category if category else current["category"],
+            "notes": notes if notes else current["notes"]
+        }
         c.execute("""
             UPDATE ebooks
             SET title = ?, author = ?, date_published = ?, category = ?, notes = ?
             WHERE code = ?
-        """, (title, author, date_published, category, notes, code))
+        """, (new_values["title"], new_values["author"], new_values["date_published"], new_values["category"], new_values["notes"], code))
         conn.commit()
         conn.close()
 

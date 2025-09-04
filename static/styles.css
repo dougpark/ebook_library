@@ -1,3 +1,11 @@
+/* Settings dropdown menu font size */
+.dropdown-menu {
+  font-size: 1.15rem !important;
+  min-width: 200px !important;
+}
+.dropdown-item {
+  font-size: 1.15rem !important;
+}
 /* Responsive Top Bar Styles */
 .top-bar.responsive-bar {
   display: flex;
@@ -215,6 +223,15 @@ a {
   margin-bottom: 6px;
   font-size: 1rem;
 }
+.ebook-title, .ebook-author, .ebook-date, .ebook-category {
+  margin-bottom: 6px;
+  font-size: 1rem;
+  background: var(--editable-bg, #f0f0f0);
+  color: var(--text-color);
+  border-radius: 4px;
+  padding: 6px 8px;
+  display: block;
+}
 
 .ebook-meta-row {
   display: flex;
@@ -252,7 +269,23 @@ a {
   display: block;
   padding: 6px 8px;
   border-radius: 4px;
-  background: var(--editable-bg, #f0f0f0);
+  background: var(--editable-bg, #2c2c2c);
+  scrollbar-width: thin;
+  scrollbar-color: #444 #181818;
+}
+
+/* For Webkit browsers */
+.ebook-notes::-webkit-scrollbar {
+  width: 8px;
+}
+.ebook-notes::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+.ebook-notes::-webkit-scrollbar-track {
+  background: #222 !important;
+  background-clip: padding-box;
+  border-radius: 4px;
 }
 
 .ebook-actions {
