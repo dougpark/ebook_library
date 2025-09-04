@@ -18,7 +18,8 @@ Built with Flask and SQLite, this project lets you organize, search, and edit eb
 - **Dark and light themes:** Easily switch between color schemes.
 - **File Based:** Current Folder determines initial category
 
-Renames filename on disk to append unique metadata tracker.
+### Warning
+Renames filename on disk to append a unique metadata tracker. That's right, don't point this to an existing file system that is being used by another ebook manager. This will rename the files by appending a unique tag which will break your other system. 
 
 ## Getting Started
 
