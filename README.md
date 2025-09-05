@@ -5,6 +5,8 @@ Built with Flask and SQLite, this project lets you organize, search, and edit eb
 
 ![Main UI](screenshots/ebook_library.png)
 
+> ## Libraries are not readers
+
 ## Features
 
 - **Responsive card layout:** Works great on desktop and mobile.
