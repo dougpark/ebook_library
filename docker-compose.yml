@@ -1,11 +1,17 @@
 version: "3.9"
 
+# Ports
+# 5100 - Application Port
+# 5100 - Production Host port
+# 5101 - Development Host port mapped to application port
+
+
 services:
   ebook-library:
     build: .
     container_name: ebook_library
     ports:
-      - "5100:5100"
+      - "5101:5100" # Map port 5100 inside the container to port 5101 on the host
     volumes:
       - ./:/app
       - ./ebooks:/app/ebooks # Folder containing your ebooks

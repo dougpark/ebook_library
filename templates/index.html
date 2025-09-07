@@ -4,181 +4,321 @@
 <head>
     <meta charset="utf-8">
     <title>Ebook Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bulma.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Bulma: Light placeholder for dark input */
+        input.has-background-dark::placeholder {
+            color: #eee !important;
+            opacity: 1;
+        }
 
+        .clear-btn {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            user-select: none;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 
 <body class="dark-theme">
-    <div class="top-bar responsive-bar">
-        <div class="bar-title">Ebook Library</div>
-        <div class="bar-actions" style="position:relative;">
-            <button class="highlight-btn" id="settingsBtn" title="Settings" aria-haspopup="true" aria-expanded="false">
-                <span class="material-icons">settings</span>
-            </button>
-            <div id="settingsDropdown" class="dropdown-menu"
-                style="display:none; position:absolute; right:0; top:48px; min-width:200px; background:#252525; color:#222; border-radius:10px; box-shadow:0 8px 32px 0 rgba(0,0,0,0.18), 0 0 0 2px #e0e0e0; z-index:100; font-size:1.15rem; border: 1px solid #e0e0e0;">
-                <button class="dropdown-item" id="sortTitle"
-                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Sort
-                    by Title</button>
-                <button class="dropdown-item" id="sortAuthor"
-                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Sort
-                    by Author</button>
-                <button class="dropdown-item" id="sortDate"
-                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Sort
-                    by Date</button>
-                <button class="dropdown-item" id="sortCategory"
-                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Sort
-                    by Category</button>
-                <hr style="margin:8px 0;border:none;border-top:1px solid #444;">
-                <button class="dropdown-item" id="themeToggle"
-                    style="width:100%; background:none; border:none; color:#fff; padding:10px 16px; text-align:left; cursor:pointer;">Theme:
-                    <span id="themeLabel">Dark</span></button>
-                <div style="width:100%;text-align:right;font-size:1rem;color:#bbb;padding:8px 16px 2px 0;">
-                    Version: {{ version }}
-                </div>
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <span class="navbar-item has-text-weight-bold is-size-4">Ebook Library</span>
+        </div>
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <button class="button is-dark is-outlined" id="settingsBtn" title="Settings">
+                    <span class="material-icons">settings</span>
+                </button>
             </div>
         </div>
-    </div>
-    <div class="layout-row">
-        <div id="sidebar" class="sidebar active">
-
-            <h2>Search</h2>
-            <div>
-                <div class="search-wrapper">
-                    <input type="text" id="searchBox" placeholder="Search for anything...">
-                    <span id="clearSearch" class="clear-btn" title="Clear">&times;</span>
-                </div>
-            </div>
-            <h2>Categories</h2>
-            <ul id="categoryList">
-                <li>
-                    <a href="#" class="category-link">All <span class="category-count">({{ total_count }})</span></a>
-                </li>
-                {% for category in categories %}
-                <li>
-                    <a href="#" class="category-link">
-                        {{ category.name }} <span class="category-count">({{ category.count }})</span>
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-            <h2>Library</h2>
-            <div>
-                <a href="{{ url_for('reindex') }}" class="action-btn">Re-Index Ebooks</a>
-            </div>
-        </div>
-        <div id="mainContent" class="main-content">
-
-            {% with messages=get_flashed_messages() %}
-
-            {% if messages %}
-
-            {% for message in messages %}
-
-            <div class="flash {% if 'successfully' in message %}success{% else %}info{% endif %}">
-                {{message}}
-
-            </div>
-            {% endfor %}
-
-            {% endif %}
-
-            {% endwith %}
-
-            <div id="ebookList">
-                {% for ebook in ebooks %}
-                <div class="ebook-card" data-code="{{ ebook.metadata.code }}">
-                    <div class="ebook-info">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <div class="ebook-title editable" contenteditable="true" data-placeholder="Title"
-                                style="flex:1;">{{
-                                ebook.metadata.title }}</div>
-                            <span class="file-info" style="flex-shrink:0;display:flex;align-items:center;">
-                                {% if ebook.file_ext == 'pdf' %}
-                                <span class="material-icons" title="PDF"
-                                    style="vertical-align:middle;color:var(--text-color,#e0e0e0);font-size:1.2em;">picture_as_pdf</span>
-                                {% elif ebook.file_ext == 'epub' %}
-                                <span class="material-icons" title="EPUB"
-                                    style="vertical-align:middle;color:var(--text-color,#e0e0e0);font-size:1.2em;">menu_book</span>
-                                {% else %}
-                                <span class="material-icons" title="File"
-                                    style="vertical-align:middle;color:var(--text-color,#e0e0e0);font-size:1.2em;">insert_drive_file</span>
-                                {% endif %}
-                                <span class="file-size" style="font-size:0.95em;color:#888;margin-left:4px;">
-                                    {{ (ebook.file_size // 1000000)|string + 'm' if ebook.file_size >= 1000000 else
-                                    (ebook.file_size // 1000)|string + 'k' if ebook.file_size >= 1000 else
-                                    ebook.file_size|string + 'b' }}
-                                </span>
-                            </span>
+    </nav>
+    <section class="section has-background-dark has-text-light" style="min-height:100vh;">
+        <div class="container is-fluid">
+            <div class="columns is-gapless">
+                <!-- Sidebar -->
+                <div id="sidebar" class="column is-2 p-4 px-4 mx-4 has-background-black-ter">
+                    <div class="pl-2 pr-2">
+                        <h2 class="title is-5 has-text-light mb-3 mt-4">Search</h2>
+                        <div class="field">
+                            <div class="control has-icons-right has-background-dark p-2" style="border-radius: 6px;">
+                                <input class="input has-background-dark has-text-light" type="text" id="searchBox"
+                                    placeholder="Search for anything..." style="border:none;">
+                                <span id="clearSearch" class="icon is-right clear-btn has-text-light" title="Clear"
+                                    style="font-size: 1.25rem; cursor: pointer;" role="button"
+                                    tabindex="0">&times;</span>
+                            </div>
                         </div>
-                        <!-- <div class="ebook-meta-row"> -->
-                        <div class="ebook-author editable" contenteditable="true" data-placeholder="Author">{{
-                            ebook.metadata.author }}</div>
-                        <div class="ebook-date editable" contenteditable="true" data-placeholder="Date">{{
-                            ebook.metadata.date_published }}
+                        <h2 class="title is-5 has-text-light mt-5 mb-3">Categories</h2>
+                        <ul id="categoryList" class="menu-list">
+                            <li class="mb-2">
+                                <a href="#" class="category-link" style="transition: background 0.2s;"
+                                    onmouseover="this.classList.add('has-background-warning');"
+                                    onmouseout="this.classList.remove('has-background-warning');">
+                                    All
+                                    <span class="tag is-info is-light category-count" style="float:right;">{{
+                                        total_count }}</span>
+                                </a>
+                            </li>
+                            {% for category in categories %}
+                            <li class="mb-2">
+                                <a href="#" class="category-link" style="transition: background 0.2s;"
+                                    onmouseover="this.classList.add('has-background-warning');"
+                                    onmouseout="this.classList.remove('has-background-warning');">
+                                    {{ category.name }}
+                                    <span class="tag is-info is-light category-count" style="float:right;">{{
+                                        category.count }}</span>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <h2 class="title is-5 has-text-light mt-5 mb-3">Library</h2>
+                        <div>
+                            <a href="{{ url_for('reindex') }}" class="button is-small is-warning is-fullwidth">Re-Index
+                                Ebooks</a>
                         </div>
-                        <div class="ebook-category editable" contenteditable="true" data-placeholder="Category">{{
-                            ebook.metadata.category }}</div>
-                        <!-- </div> -->
-
-                        <div class="ebook-notes editable" contenteditable="true" data-placeholder="Notes">{{
-                            ebook.metadata.notes }}</div>
-                    </div>
-                    <div class="ebook-actions">
-                        <a href="{{ url_for('download', rel_path=ebook.relative_path) }}"
-                            class="download-btn">Download</a>
                     </div>
                 </div>
-                {% endfor %}
+
+                <!-- Main Content -->
+                <div id="mainContent" class="column is-10 p-4">
+
+                    {% with messages=get_flashed_messages() %}
+
+                    {% if messages %}
+
+                    {% for message in messages %}
+
+                    <div class="flash {% if 'successfully' in message %}success{% else %}info{% endif %}">
+                        {{message}}
+
+                    </div>
+                    {% endfor %}
+
+                    {% endif %}
+
+                    {% endwith %}
+
+                    <div id="ebookList">
+                        <div id="ebookList" class="ebook-list-flex"
+                            style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                            {% for ebook in ebooks %}
+                            <div class="card ebook-card mb-4 has-background-black-ter"
+                                data-code="{{ ebook.metadata.code }}"
+                                style="flex: 1 1 320px; max-width: 32%; min-width: 280px;">
+                                <div class="card-content ebook-info has-background-black-ter has-text-light"
+                                    style="border-radius: 8px;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <div class="ebook-title editable" contenteditable="true"
+                                            data-placeholder="Title" style="flex:1;">{{
+                                            ebook.metadata.title }}</div>
+
+                                    </div>
+                                    <!-- <div class="ebook-meta-row"> -->
+                                    <div class="ebook-author editable" contenteditable="true" data-placeholder="Author">
+                                        {{
+                                        ebook.metadata.author }}</div>
+                                    <div class="ebook-date editable" contenteditable="true" data-placeholder="Date">{{
+                                        ebook.metadata.date_published }}
+                                    </div>
+                                    <div class="ebook-category editable" contenteditable="true"
+                                        data-placeholder="Category">
+                                        {{
+                                        ebook.metadata.category }}</div>
+                                    <!-- </div> -->
+
+                                    <div class="ebook-notes editable" contenteditable="true" data-placeholder="Notes">{{
+                                        ebook.metadata.notes }}</div>
+                                </div>
+                                <div class="ebook-actions mt-2">
+                                    <div class="has-background-black-ter p-2 is-flex is-justify-content-space-between"
+                                        style="border-radius: 6px;">
+                                        <a href="{{ url_for('download', rel_path=ebook.relative_path) }}"
+                                            class="button is-small is-link">Download</a>
+                                        <span class="file-info" style="flex-shrink:0;display:flex;align-items:center;">
+                                            {% if ebook.file_ext == 'pdf' %}
+                                            <span class="material-icons" title="PDF"
+                                                style="vertical-align:middle;color:var(--text-color,#e0e0e0);font-size:1.2em;">picture_as_pdf</span>
+                                            {% elif ebook.file_ext == 'epub' %}
+                                            <span class="material-icons" title="EPUB"
+                                                style="vertical-align:middle;color:var(--text-color,#e0e0e0);font-size:1.2em;">menu_book</span>
+                                            {% else %}
+                                            <span class="material-icons" title="File"
+                                                style="vertical-align:middle;color:var(--text-color,#e0e0e0);font-size:1.2em;">insert_drive_file</span>
+                                            {% endif %}
+                                            <span class="file-size"
+                                                style="font-size:0.95em;color:#888;margin-left:4px;">
+                                                {{ (ebook.file_size // 1000000)|string + 'm' if ebook.file_size >=
+                                                1000000
+                                                else
+                                                (ebook.file_size // 1000)|string + 'k' if ebook.file_size >= 1000 else
+                                                ebook.file_size|string + 'b' }}
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <script src="{{ url_for('static', filename='main.js') }}"></script>
-        <script>
-            // Theme switching logic
-            function setTheme(theme) {
-                document.body.classList.remove('dark-theme', 'light-theme');
-                if (theme === 'dark') {
-                    document.body.classList.add('dark-theme');
-                    document.getElementById('themeLabel').textContent = 'Dark';
-                } else {
-                    document.body.classList.add('light-theme');
-                    document.getElementById('themeLabel').textContent = 'Light';
-                }
-                localStorage.setItem('theme', theme);
-            }
-            // On load, set theme from localStorage or default to dark
-            (function () {
-                var theme = localStorage.getItem('theme') || 'dark';
-                setTheme(theme);
-            })();
-            document.getElementById('themeToggle').addEventListener('click', function (e) {
-                var current = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-                var next = current === 'dark' ? 'light' : 'dark';
-                setTheme(next);
+    </section>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script>
+        // Sidebar category filtering
+        document.addEventListener('DOMContentLoaded', function () {
+            var categoryLinks = document.querySelectorAll('.category-link');
+            categoryLinks.forEach(function (link) {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    // Only use the category name, not the count
+                    var categoryText = link.childNodes[0].nodeType === Node.TEXT_NODE ? link.childNodes[0].textContent.trim() : link.textContent.trim();
+                    var cards = document.querySelectorAll('.ebook-card');
+                    cards.forEach(function (card) {
+                        var cardCategory = card.querySelector('.ebook-category')?.textContent.trim() || '';
+                        if (categoryText === 'All' || cardCategory === categoryText) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
             });
-        </script>
-        <script>
-            // Auto-save all metadata fields on blur
-            function refreshCategories() {
-                fetch('/categories_list')
-                    .then(res => res.json())
-                    .then(data => {
-                        const list = document.getElementById('categoryList');
-                        if (!list) return;
-                        list.innerHTML = '';
-                        // Add 'All' category
-                        const allLi = document.createElement('li');
-                        allLi.innerHTML = `<a href="#" class="category-link">All <span class="category-count">(${data.total_count})</span></a>`;
-                        list.appendChild(allLi);
-                        // Add other categories
-                        data.categories.forEach(cat => {
-                            const li = document.createElement('li');
-                            li.innerHTML = `<a href="#" class="category-link">${cat.name} <span class="category-count">(${cat.count})</span></a>`;
-                            list.appendChild(li);
+        });
+    </script>
+    <script>
+        // Clear search box when clearSearch icon is clicked
+        document.addEventListener('DOMContentLoaded', function () {
+            var searchBox = document.getElementById('searchBox');
+            var clearBtn = document.getElementById('clearSearch');
+            if (searchBox && clearBtn) {
+                function clearSearchField() {
+                    searchBox.value = '';
+                    searchBox.focus();
+                    var event = new Event('input', { bubbles: true });
+                    searchBox.dispatchEvent(event);
+                }
+                clearBtn.addEventListener('click', clearSearchField);
+                clearBtn.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        clearSearchField();
+                    }
+                });
+            }
+            // Filter logic
+            if (searchBox) {
+                searchBox.addEventListener('input', function () {
+                    var query = searchBox.value.trim().toLowerCase();
+                    var cards = document.querySelectorAll('.ebook-card');
+                    cards.forEach(function (card) {
+                        var title = card.querySelector('.ebook-title')?.textContent.trim().toLowerCase() || '';
+                        var author = card.querySelector('.ebook-author')?.textContent.trim().toLowerCase() || '';
+                        var category = card.querySelector('.ebook-category')?.textContent.trim().toLowerCase() || '';
+                        var notes = card.querySelector('.ebook-notes')?.textContent.trim().toLowerCase() || '';
+                        var date = card.querySelector('.ebook-date')?.textContent.trim().toLowerCase() || '';
+                        if (
+                            title.includes(query) ||
+                            author.includes(query) ||
+                            category.includes(query) ||
+                            notes.includes(query) ||
+                            date.includes(query)
+                        ) {
+                            card.style.display = '';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    <script>
+        // Theme switching logic
+        function setTheme(theme) {
+            document.body.classList.remove('dark-theme', 'light-theme');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                document.getElementById('themeLabel').textContent = 'Dark';
+            } else {
+                document.body.classList.add('light-theme');
+                document.getElementById('themeLabel').textContent = 'Light';
+            }
+            localStorage.setItem('theme', theme);
+        }
+        // On load, set theme from localStorage or default to dark
+        (function () {
+            var theme = localStorage.getItem('theme') || 'dark';
+            setTheme(theme);
+        })();
+        document.getElementById('themeToggle').addEventListener('click', function (e) {
+            var current = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+            var next = current === 'dark' ? 'light' : 'dark';
+            setTheme(next);
+        });
+    </script>
+    <script>
+        // Auto-save all metadata fields on blur
+        function refreshCategories() {
+            fetch('/categories_list')
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('categoryList');
+                    if (!list) return;
+                    list.innerHTML = '';
+                    // Add 'All' category
+                    const allLi = document.createElement('li');
+                    allLi.className = 'mb-2';
+                    allLi.innerHTML = `
+                        <a href="#" class="category-link" style="transition: background 0.2s;"
+                            onmouseover="this.classList.add('has-background-warning');"
+                            onmouseout="this.classList.remove('has-background-warning');">
+                            All
+                            <span class="tag is-info is-light category-count" style="float:right;">${data.total_count}</span>
+                        </a>
+                    `;
+                    list.appendChild(allLi);
+                    // Add other categories
+                    data.categories.forEach(cat => {
+                        const li = document.createElement('li');
+                        li.className = 'mb-2';
+                        li.innerHTML = `
+                            <a href="#" class="category-link" style="transition: background 0.2s;"
+                                onmouseover="this.classList.add('has-background-warning');"
+                                onmouseout="this.classList.remove('has-background-warning');">
+                                ${cat.name}
+                                <span class="tag is-info is-light category-count" style="float:right;">${cat.count}</span>
+                            </a>
+                        `;
+                        list.appendChild(li);
+                    });
+                    // Re-attach category filtering event listeners
+                    const categoryLinks = document.querySelectorAll('.category-link');
+                    categoryLinks.forEach(function (link) {
+                        link.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            // Only use the category name, not the count
+                            var categoryText = link.childNodes[0].nodeType === Node.TEXT_NODE ? link.childNodes[0].textContent.trim() : link.textContent.trim();
+                            var cards = document.querySelectorAll('.ebook-card');
+                            cards.forEach(function (card) {
+                                var cardCategory = card.querySelector('.ebook-category')?.textContent.trim() || '';
+                                if (categoryText === 'All' || cardCategory === categoryText) {
+                                    card.style.display = '';
+                                } else {
+                                    card.style.display = 'none';
+                                }
+                            });
                         });
                     });
-            }
+                });
+        }
+
+        // Attach auto-save logic to all metadata fields
+        function attachMetadataAutoSave() {
             document.querySelectorAll('.ebook-card').forEach(card => {
                 const code = card.getAttribute('data-code');
                 card.querySelectorAll('.editable').forEach(field => {
@@ -210,12 +350,13 @@
                                 notes: notes
                             })
                         }).then(res => res.json()).then(data => {
-                            // Sparkle animation for field
                             field.classList.add('sparkle-animate');
                             setTimeout(() => field.classList.remove('sparkle-animate'), 700);
-                            // Optionally show feedback
+                            // If category was changed, refresh categories
                             if (field.classList.contains('ebook-category')) {
                                 refreshCategories();
+                                // Re-attach auto-save after refresh
+                                setTimeout(attachMetadataAutoSave, 500);
                             }
                         });
                     });
@@ -281,7 +422,13 @@
                 sortCards('category');
                 dropdown.style.display = 'none';
             });
-        </script>
+        }
+
+        // Initial attach on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function () {
+            attachMetadataAutoSave();
+        });
+    </script>
 </body>
 
 </html>
