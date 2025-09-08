@@ -9,3 +9,192 @@
   60% { box-shadow: 0 0 8px 2px #ffd700, 0 0 4px 1px #fff; }
   100% { box-shadow: 0 0 0px 0px #ffd700, 0 0 0px 0px #fff; }
 }
+
+/* Settings dropdown styles */
+#settingsDropdown {
+  border: 1px solid #4a4a4a;
+  background: #363636 !important;
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+#settingsDropdown .dropdown-item {
+  color: #dbdbdb;
+  text-decoration: none;
+  display: block;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.95rem;
+}
+
+#settingsDropdown .dropdown-item:hover {
+  background-color: #4a4a4a !important;
+  color: #ffffff;
+}
+
+#settingsDropdown .dropdown-item:first-child {
+  color: #b5b5b5;
+  font-weight: 600;
+  cursor: default;
+  border-bottom: 1px solid #4a4a4a;
+  padding: 8px 16px;
+}
+
+#settingsDropdown .dropdown-item:first-child:hover {
+  background-color: transparent !important;
+  color: #b5b5b5 !important;
+}
+
+#settingsDropdown .dropdown-item .material-icons {
+  font-size: 18px;
+  vertical-align: middle;
+  margin-right: 8px;
+  opacity: 0.8;
+}
+
+/* Settings button active state */
+#settingsBtn {
+  background-color: #f5f5f5 !important;
+  border-color: #dbdbdb !important;
+  color: #363636 !important;
+}
+
+#settingsBtn:hover {
+  background-color: #eeeeee !important;
+  border-color: #dbdbdb !important;
+  color: #363636 !important;
+}
+
+#settingsBtn[aria-expanded="true"] {
+  background-color: #e8e8e8 !important;
+  border-color: #dbdbdb !important;
+  color: #363636 !important;
+}
+
+/* Category selection styles */
+.category-link.selected {
+  background-color: #3273dc !important;
+  color: #ffffff !important;
+  border-radius: 4px !important;
+}
+
+.category-link.selected:hover {
+  background-color: #2968c8 !important;
+  color: #ffffff !important;
+  border-radius: 4px !important;
+}
+
+/* Category list spacing */
+#categoryList {
+  padding-left: 12px;
+}
+
+/* Light theme styles */
+.light-theme {
+  background-color: #ffffff !important;
+  color: #363636 !important;
+}
+
+.light-theme .navbar {
+  background-color: #f5f5f5 !important;
+}
+
+.light-theme .section {
+  background-color: #ffffff !important;
+  color: #363636 !important;
+}
+
+.light-theme #sidebar {
+  background-color: #f8f9fa !important;
+  color: #363636 !important;
+}
+
+.light-theme .title {
+  color: #363636 !important;
+}
+
+.light-theme .ebook-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e1e1e1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.light-theme .card-content {
+  background-color: #ffffff !important;
+  color: #363636 !important;
+}
+
+.light-theme .ebook-actions > div {
+  background-color: #f8f9fa !important;
+}
+
+.light-theme .input {
+  background-color: #ffffff !important;
+  color: #363636 !important;
+  border: 1px solid #dbdbdb !important;
+}
+
+.light-theme .input::placeholder {
+  color: #7a7a7a !important;
+}
+
+.light-theme .control > div {
+  background-color: #f8f9fa !important;
+}
+
+.light-theme .clear-btn {
+  color: #7a7a7a !important;
+}
+
+.light-theme .category-link {
+  color: #363636 !important;
+}
+
+.light-theme .category-link:hover:not(.selected) {
+  background-color: #e8f4fd !important;
+}
+
+.light-theme .flash {
+  background-color: #e8f4fd;
+  color: #0066cc;
+  border: 1px solid #b3d9ff;
+}
+
+/* Light theme dropdown adjustments */
+.light-theme #settingsDropdown {
+  background: #ffffff !important;
+  border: 1px solid #dbdbdb;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.light-theme #settingsDropdown .dropdown-item {
+  color: #363636 !important;
+}
+
+.light-theme #settingsDropdown .dropdown-item:hover {
+  background-color: #f5f5f5 !important;
+  color: #363636 !important;
+}
+
+.light-theme #settingsDropdown .dropdown-item:first-child {
+  color: #7a7a7a !important;
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.light-theme #settingsDropdown hr {
+  border-top: 1px solid #dbdbdb !important;
+}
+
+/* Sidebar section icons */
+.title .material-icons {
+  opacity: 0.9;
+}
+
+.light-theme .title .material-icons {
+  opacity: 0.8;
+  color: #5a5a5a !important;
+}

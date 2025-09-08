@@ -25,15 +25,79 @@
 </head>
 
 <body class="dark-theme">
-    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation"
+        style="padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 1rem;">
         <div class="navbar-brand">
             <span class="navbar-item has-text-weight-bold is-size-4">Ebook Library</span>
         </div>
         <div class="navbar-end">
-            <div class="navbar-item">
-                <button class="button is-dark is-outlined" id="settingsBtn" title="Settings">
+            <div class="navbar-item has-dropdown" style="position: relative;">
+                <button class="button is-light" id="settingsBtn" title="Settings" aria-haspopup="true"
+                    aria-expanded="false">
                     <span class="material-icons">settings</span>
                 </button>
+                <div id="settingsDropdown" class="dropdown-menu"
+                    style="display: none; position: absolute; top: 100%; z-index: 20; min-width: 200px; background: #363636; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); padding: 8px 0;">
+                    <div class="dropdown-content">
+                        <div class="dropdown-item"
+                            style="padding: 8px 16px; color: #b5b5b5; font-weight: 600; border-bottom: 1px solid #4a4a4a;">
+                            Sort by
+                        </div>
+                        <a class="dropdown-item" id="sortTitle" href="#"
+                            style="padding: 8px 16px; color: #dbdbdb; transition: background 0.2s;"
+                            onmouseover="this.style.background='#4a4a4a'"
+                            onmouseout="this.style.background='transparent'">
+                            <span class="material-icons"
+                                style="font-size: 16px; vertical-align: middle; margin-right: 8px;">title</span>
+                            Title
+                        </a>
+                        <a class="dropdown-item" id="sortAuthor" href="#"
+                            style="padding: 8px 16px; color: #dbdbdb; transition: background 0.2s;"
+                            onmouseover="this.style.background='#4a4a4a'"
+                            onmouseout="this.style.background='transparent'">
+                            <span class="material-icons"
+                                style="font-size: 16px; vertical-align: middle; margin-right: 8px;">person</span>
+                            Author
+                        </a>
+                        <a class="dropdown-item" id="sortDate" href="#"
+                            style="padding: 8px 16px; color: #dbdbdb; transition: background 0.2s;"
+                            onmouseover="this.style.background='#4a4a4a'"
+                            onmouseout="this.style.background='transparent'">
+                            <span class="material-icons"
+                                style="font-size: 16px; vertical-align: middle; margin-right: 8px;">date_range</span>
+                            Date
+                        </a>
+                        <a class="dropdown-item" id="sortCategory" href="#"
+                            style="padding: 8px 16px; color: #dbdbdb; transition: background 0.2s;"
+                            onmouseover="this.style.background='#4a4a4a'"
+                            onmouseout="this.style.background='transparent'">
+                            <span class="material-icons"
+                                style="font-size: 16px; vertical-align: middle; margin-right: 8px;">category</span>
+                            Category
+                        </a>
+                        <hr style="margin: 8px 0; border: none; border-top: 1px solid #4a4a4a;">
+                        <div class="dropdown-item"
+                            style="padding: 8px 16px; color: #b5b5b5; font-weight: 600; border-bottom: 1px solid #4a4a4a;">
+                            Theme
+                        </div>
+                        <a class="dropdown-item" id="setDarkTheme" href="#"
+                            style="padding: 8px 16px; color: #dbdbdb; transition: background 0.2s;"
+                            onmouseover="this.style.background='#4a4a4a'"
+                            onmouseout="this.style.background='transparent'">
+                            <span class="material-icons"
+                                style="font-size: 16px; vertical-align: middle; margin-right: 8px;">dark_mode</span>
+                            Dark Theme
+                        </a>
+                        <a class="dropdown-item" id="setLightTheme" href="#"
+                            style="padding: 8px 16px; color: #dbdbdb; transition: background 0.2s;"
+                            onmouseover="this.style.background='#4a4a4a'"
+                            onmouseout="this.style.background='transparent'">
+                            <span class="material-icons"
+                                style="font-size: 16px; vertical-align: middle; margin-right: 8px;">light_mode</span>
+                            Light Theme
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -43,7 +107,11 @@
                 <!-- Sidebar -->
                 <div id="sidebar" class="column is-2 p-4 px-4 mx-4 has-background-black-ter">
                     <div class="pl-2 pr-2">
-                        <h2 class="title is-5 has-text-light mb-3 mt-4">Search</h2>
+                        <h2 class="title is-5 has-text-light mb-3 mt-4">
+                            <span class="material-icons"
+                                style="font-size: 20px; vertical-align: middle; margin-right: 8px;">search</span>
+                            Search
+                        </h2>
                         <div class="field">
                             <div class="control has-icons-right has-background-dark p-2" style="border-radius: 6px;">
                                 <input class="input has-background-dark has-text-light" type="text" id="searchBox"
@@ -53,11 +121,15 @@
                                     tabindex="0">&times;</span>
                             </div>
                         </div>
-                        <h2 class="title is-5 has-text-light mt-5 mb-3">Categories</h2>
+                        <h2 class="title is-5 has-text-light mt-5 mb-3">
+                            <span class="material-icons"
+                                style="font-size: 20px; vertical-align: middle; margin-right: 8px;">category</span>
+                            Categories
+                        </h2>
                         <ul id="categoryList" class="menu-list">
                             <li class="mb-2">
                                 <a href="#" class="category-link" style="transition: background 0.2s;"
-                                    onmouseover="this.classList.add('has-background-warning');"
+                                    onmouseover="if (!this.classList.contains('selected')) this.classList.add('has-background-warning');"
                                     onmouseout="this.classList.remove('has-background-warning');">
                                     All
                                     <span class="tag is-info is-light category-count" style="float:right;">{{
@@ -67,7 +139,7 @@
                             {% for category in categories %}
                             <li class="mb-2">
                                 <a href="#" class="category-link" style="transition: background 0.2s;"
-                                    onmouseover="this.classList.add('has-background-warning');"
+                                    onmouseover="if (!this.classList.contains('selected')) this.classList.add('has-background-warning');"
                                     onmouseout="this.classList.remove('has-background-warning');">
                                     {{ category.name }}
                                     <span class="tag is-info is-light category-count" style="float:right;">{{
@@ -76,7 +148,11 @@
                             </li>
                             {% endfor %}
                         </ul>
-                        <h2 class="title is-5 has-text-light mt-5 mb-3">Library</h2>
+                        <h2 class="title is-5 has-text-light mt-5 mb-3">
+                            <span class="material-icons"
+                                style="font-size: 20px; vertical-align: middle; margin-right: 8px;">library_books</span>
+                            Library
+                        </h2>
                         <div>
                             <a href="{{ url_for('reindex') }}" class="button is-small is-warning is-fullwidth">Re-Index
                                 Ebooks</a>
@@ -173,9 +249,22 @@
         // Sidebar category filtering
         document.addEventListener('DOMContentLoaded', function () {
             var categoryLinks = document.querySelectorAll('.category-link');
+
+            // Set "All" as initially selected
+            categoryLinks[0]?.classList.add('selected');
+
             categoryLinks.forEach(function (link) {
                 link.addEventListener('click', function (e) {
                     e.preventDefault();
+
+                    // Remove selected class from all category links
+                    categoryLinks.forEach(function (otherLink) {
+                        otherLink.classList.remove('selected');
+                    });
+
+                    // Add selected class to clicked link
+                    link.classList.add('selected');
+
                     // Only use the category name, not the count
                     var categoryText = link.childNodes[0].nodeType === Node.TEXT_NODE ? link.childNodes[0].textContent.trim() : link.textContent.trim();
                     var cards = document.querySelectorAll('.ebook-card');
@@ -243,10 +332,8 @@
             document.body.classList.remove('dark-theme', 'light-theme');
             if (theme === 'dark') {
                 document.body.classList.add('dark-theme');
-                document.getElementById('themeLabel').textContent = 'Dark';
             } else {
                 document.body.classList.add('light-theme');
-                document.getElementById('themeLabel').textContent = 'Light';
             }
             localStorage.setItem('theme', theme);
         }
@@ -255,15 +342,17 @@
             var theme = localStorage.getItem('theme') || 'dark';
             setTheme(theme);
         })();
-        document.getElementById('themeToggle').addEventListener('click', function (e) {
-            var current = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-            var next = current === 'dark' ? 'light' : 'dark';
-            setTheme(next);
-        });
     </script>
     <script>
         // Auto-save all metadata fields on blur
         function refreshCategories() {
+            // Remember the currently selected category
+            const currentlySelected = document.querySelector('.category-link.selected');
+            const selectedCategoryText = currentlySelected ?
+                (currentlySelected.childNodes[0].nodeType === Node.TEXT_NODE ?
+                    currentlySelected.childNodes[0].textContent.trim() :
+                    currentlySelected.textContent.trim()) : 'All';
+
             fetch('/categories_list')
                 .then(res => res.json())
                 .then(data => {
@@ -275,7 +364,7 @@
                     allLi.className = 'mb-2';
                     allLi.innerHTML = `
                         <a href="#" class="category-link" style="transition: background 0.2s;"
-                            onmouseover="this.classList.add('has-background-warning');"
+                            onmouseover="if (!this.classList.contains('selected')) this.classList.add('has-background-warning');"
                             onmouseout="this.classList.remove('has-background-warning');">
                             All
                             <span class="tag is-info is-light category-count" style="float:right;">${data.total_count}</span>
@@ -288,7 +377,7 @@
                         li.className = 'mb-2';
                         li.innerHTML = `
                             <a href="#" class="category-link" style="transition: background 0.2s;"
-                                onmouseover="this.classList.add('has-background-warning');"
+                                onmouseover="if (!this.classList.contains('selected')) this.classList.add('has-background-warning');"
                                 onmouseout="this.classList.remove('has-background-warning');">
                                 ${cat.name}
                                 <span class="tag is-info is-light category-count" style="float:right;">${cat.count}</span>
@@ -296,11 +385,21 @@
                         `;
                         list.appendChild(li);
                     });
+
                     // Re-attach category filtering event listeners
                     const categoryLinks = document.querySelectorAll('.category-link');
                     categoryLinks.forEach(function (link) {
                         link.addEventListener('click', function (e) {
                             e.preventDefault();
+
+                            // Remove selected class from all category links
+                            categoryLinks.forEach(function (otherLink) {
+                                otherLink.classList.remove('selected');
+                            });
+
+                            // Add selected class to clicked link
+                            link.classList.add('selected');
+
                             // Only use the category name, not the count
                             var categoryText = link.childNodes[0].nodeType === Node.TEXT_NODE ? link.childNodes[0].textContent.trim() : link.textContent.trim();
                             var cards = document.querySelectorAll('.ebook-card');
@@ -313,6 +412,14 @@
                                 }
                             });
                         });
+
+                        // Restore the previously selected category
+                        const linkText = link.childNodes[0].nodeType === Node.TEXT_NODE ?
+                            link.childNodes[0].textContent.trim() :
+                            link.textContent.trim();
+                        if (linkText === selectedCategoryText) {
+                            link.classList.add('selected');
+                        }
                     });
                 });
         }
@@ -362,14 +469,72 @@
                     });
                 });
             });
-            // Dropdown menu logic
+        }
+
+        // Settings dropdown and sorting logic
+        function initializeSettings() {
             const settingsBtn = document.getElementById('settingsBtn');
             const dropdown = document.getElementById('settingsDropdown');
+
+            if (!settingsBtn || !dropdown) return;
+
+            // Function to position dropdown responsively
+            function positionDropdown() {
+                const btnRect = settingsBtn.getBoundingClientRect();
+                const dropdownWidth = 200; // min-width from CSS
+                const viewportWidth = window.innerWidth;
+                const spaceRight = viewportWidth - btnRect.right;
+                const spaceLeft = btnRect.left;
+
+                // Reset transform first
+                dropdown.style.transform = '';
+                dropdown.style.left = '';
+                dropdown.style.right = '';
+
+                if (viewportWidth <= 768) { // Mobile breakpoint
+                    // On mobile, center the dropdown or align to available space
+                    if (spaceRight >= dropdownWidth) {
+                        // Enough space on the right
+                        dropdown.style.right = '0';
+                        dropdown.style.transform = '';
+                    } else if (spaceLeft >= dropdownWidth) {
+                        // Not enough space on right, but enough on left
+                        dropdown.style.right = '0';
+                        dropdown.style.transform = 'translateX(-100%)';
+                    } else {
+                        // Not enough space on either side, center it
+                        dropdown.style.right = '50%';
+                        dropdown.style.transform = 'translateX(50%)';
+                    }
+                } else { // Desktop
+                    // On desktop, prefer left-aligned dropdown
+                    if (spaceRight >= dropdownWidth - 40) {
+                        // Enough space for our preferred positioning
+                        dropdown.style.right = '0';
+                        dropdown.style.transform = 'translateX(calc(-100% + 40px))';
+                    } else {
+                        // Not enough space, align to right edge
+                        dropdown.style.right = '0';
+                        dropdown.style.transform = 'translateX(-100%)';
+                    }
+                }
+            }
+
+            // Dropdown menu logic
             settingsBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                const isVisible = dropdown.style.display === 'block';
+
+                if (!isVisible) {
+                    dropdown.style.display = 'block';
+                    positionDropdown(); // Position after showing
+                } else {
+                    dropdown.style.display = 'none';
+                }
+
                 settingsBtn.setAttribute('aria-expanded', dropdown.style.display === 'block');
             });
+
             document.addEventListener('click', function (e) {
                 if (dropdown.style.display === 'block') {
                     dropdown.style.display = 'none';
@@ -377,9 +542,18 @@
                 }
             });
 
+            // Reposition on window resize
+            window.addEventListener('resize', function () {
+                if (dropdown.style.display === 'block') {
+                    positionDropdown();
+                }
+            });
+
             // Sorting logic
             function sortCards(by) {
-                const list = document.getElementById('ebookList');
+                const list = document.querySelector('#ebookList .ebook-list-flex');
+                if (!list) return;
+
                 const cards = Array.from(list.getElementsByClassName('ebook-card'));
                 cards.sort((a, b) => {
                     let aVal, bVal;
@@ -392,11 +566,13 @@
                     } else if (by === 'date') {
                         aVal = a.querySelector('.ebook-date')?.textContent.trim() || '';
                         bVal = b.querySelector('.ebook-date')?.textContent.trim() || '';
+                        // Try to parse as dates first
                         let aDate = Date.parse(aVal);
                         let bDate = Date.parse(bVal);
                         if (!isNaN(aDate) && !isNaN(bDate)) {
                             return aDate - bDate;
                         }
+                        // Fallback to string comparison
                         return aVal.localeCompare(bVal);
                     } else if (by === 'category') {
                         aVal = a.querySelector('.ebook-category')?.textContent.trim().toLowerCase() || '';
@@ -406,27 +582,52 @@
                 });
                 cards.forEach(card => list.appendChild(card));
             }
-            document.getElementById('sortTitle').addEventListener('click', function (e) {
+
+            // Attach sorting event listeners
+            document.getElementById('sortTitle')?.addEventListener('click', function (e) {
+                e.preventDefault();
                 sortCards('title');
                 dropdown.style.display = 'none';
+                settingsBtn.setAttribute('aria-expanded', 'false');
             });
-            document.getElementById('sortAuthor').addEventListener('click', function (e) {
+            document.getElementById('sortAuthor')?.addEventListener('click', function (e) {
+                e.preventDefault();
                 sortCards('author');
                 dropdown.style.display = 'none';
+                settingsBtn.setAttribute('aria-expanded', 'false');
             });
-            document.getElementById('sortDate').addEventListener('click', function (e) {
+            document.getElementById('sortDate')?.addEventListener('click', function (e) {
+                e.preventDefault();
                 sortCards('date');
                 dropdown.style.display = 'none';
+                settingsBtn.setAttribute('aria-expanded', 'false');
             });
-            document.getElementById('sortCategory').addEventListener('click', function (e) {
+            document.getElementById('sortCategory')?.addEventListener('click', function (e) {
+                e.preventDefault();
                 sortCards('category');
                 dropdown.style.display = 'none';
+                settingsBtn.setAttribute('aria-expanded', 'false');
+            });
+
+            // Theme switching event listeners
+            document.getElementById('setDarkTheme')?.addEventListener('click', function (e) {
+                e.preventDefault();
+                setTheme('dark');
+                dropdown.style.display = 'none';
+                settingsBtn.setAttribute('aria-expanded', 'false');
+            });
+            document.getElementById('setLightTheme')?.addEventListener('click', function (e) {
+                e.preventDefault();
+                setTheme('light');
+                dropdown.style.display = 'none';
+                settingsBtn.setAttribute('aria-expanded', 'false');
             });
         }
 
-        // Initial attach on DOMContentLoaded
+        // Initial setup on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
             attachMetadataAutoSave();
+            initializeSettings();
         });
     </script>
 </body>
