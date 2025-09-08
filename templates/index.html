@@ -31,9 +31,15 @@
             <span class="navbar-item has-text-weight-bold is-size-4">Ebook Library</span>
         </div>
         <div class="navbar-end">
+            <div class="navbar-item" style="display: none;" id="hamburgerBtn">
+                <button class="button is-light" title="Menu" aria-haspopup="true" aria-expanded="false">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
             <div class="navbar-item has-dropdown" style="position: relative;">
                 <button class="button is-light" id="settingsBtn" title="Settings" aria-haspopup="true"
                     aria-expanded="false">
+
                     <span class="material-icons">settings</span>
                 </button>
                 <div id="settingsDropdown" class="dropdown-menu"
@@ -101,6 +107,10 @@
             </div>
         </div>
     </nav>
+
+    <!-- Mobile sidebar overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <section class="section has-background-dark has-text-light" style="min-height:100vh;">
         <div class="container is-fluid">
             <div class="columns is-gapless">
@@ -624,10 +634,71 @@
             });
         }
 
+        // Mobile hamburger menu functionality
+        function initializeHamburgerMenu() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            if (!hamburgerBtn || !sidebar || !overlay) return;
+
+            const hamburgerButton = hamburgerBtn.querySelector('button');
+
+            // Toggle sidebar
+            function toggleSidebar() {
+                const isOpen = sidebar.classList.contains('show');
+
+                if (isOpen) {
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                    hamburgerButton.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = '';
+                } else {
+                    sidebar.classList.add('show');
+                    overlay.classList.add('show');
+                    hamburgerButton.setAttribute('aria-expanded', 'true');
+                    document.body.style.overflow = 'hidden'; // Prevent body scroll when sidebar is open
+                }
+            }
+
+            // Close sidebar
+            function closeSidebar() {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+                hamburgerButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+
+            // Event listeners
+            hamburgerButton.addEventListener('click', function (e) {
+                e.stopPropagation();
+                toggleSidebar();
+            });
+
+            overlay.addEventListener('click', closeSidebar);
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function (e) {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                    if (!sidebar.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                        closeSidebar();
+                    }
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 768) {
+                    closeSidebar();
+                }
+            });
+        }
+
         // Initial setup on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
             attachMetadataAutoSave();
             initializeSettings();
+            initializeHamburgerMenu();
         });
     </script>
 </body>
