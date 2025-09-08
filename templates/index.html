@@ -21,6 +21,11 @@
             font-weight: bold;
             vertical-align: middle;
         }
+
+        /* Filtering styles */
+        .ebook-card.hidden {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -84,6 +89,27 @@
                         <hr style="margin: 8px 0; border: none; border-top: 1px solid #4a4a4a;">
                         <div class="dropdown-item"
                             style="padding: 8px 16px; color: #b5b5b5; font-weight: 600; border-bottom: 1px solid #4a4a4a;">
+                            View
+                        </div>
+                        <a class="dropdown-item" id="setCompactView" href="#"
+                            style="padding: 8px 16px; color: #dbdbdb; transition: background 0.2s;"
+                            onmouseover="this.style.background='#4a4a4a'"
+                            onmouseout="this.style.background='transparent'">
+                            <span class="material-icons"
+                                style="font-size: 16px; vertical-align: middle; margin-right: 8px;">view_agenda</span>
+                            Compact View
+                        </a>
+                        <a class="dropdown-item" id="setFullView" href="#"
+                            style="padding: 8px 16px; color: #dbdbdb; transition: background 0.2s;"
+                            onmouseover="this.style.background='#4a4a4a'"
+                            onmouseout="this.style.background='transparent'">
+                            <span class="material-icons"
+                                style="font-size: 16px; vertical-align: middle; margin-right: 8px;">view_module</span>
+                            Full View
+                        </a>
+                        <hr style="margin: 8px 0; border: none; border-top: 1px solid #4a4a4a;">
+                        <div class="dropdown-item"
+                            style="padding: 8px 16px; color: #b5b5b5; font-weight: 600; border-bottom: 1px solid #4a4a4a;">
                             Theme
                         </div>
                         <a class="dropdown-item" id="setDarkTheme" href="#"
@@ -116,7 +142,7 @@
             <div class="columns is-gapless">
                 <!-- Sidebar -->
                 <div id="sidebar" class="column is-2 has-background-black-ter">
-                    <div class="pl-3 pr-3">
+                    <div class="pl-4 pr-4">
                         <h2 class="title is-5 has-text-light mb-3 mt-4">
                             <span class="material-icons"
                                 style="font-size: 20px; vertical-align: middle; margin-right: 8px;">search</span>
@@ -202,29 +228,36 @@
                                         <div class="ebook-title editable" contenteditable="true"
                                             data-placeholder="Title" style="flex:1;">{{
                                             ebook.metadata.title }}</div>
-
+                                        <button class="card-info-btn" title="Show/Hide Details"
+                                            style="background:none;border:none;color:#888;cursor:pointer;font-size:16px;padding:4px;">
+                                            <span class="material-icons" style="font-size:16px;">info</span>
+                                        </button>
                                     </div>
-                                    <!-- <div class="ebook-meta-row"> -->
-                                    <div class="ebook-author editable" contenteditable="true" data-placeholder="Author">
-                                        {{
-                                        ebook.metadata.author }}</div>
-                                    <div class="ebook-date editable" contenteditable="true" data-placeholder="Date">{{
-                                        ebook.metadata.date_published }}
+                                    <div class="ebook-metadata">
+                                        <div class="ebook-author editable" contenteditable="true"
+                                            data-placeholder="Author">
+                                            {{
+                                            ebook.metadata.author }}</div>
+                                        <div class="ebook-date editable" contenteditable="true" data-placeholder="Date">
+                                            {{
+                                            ebook.metadata.date_published }}
+                                        </div>
+                                        <div class="ebook-category editable" contenteditable="true"
+                                            data-placeholder="Category">
+                                            {{
+                                            ebook.metadata.category }}</div>
+                                        <div class="ebook-notes editable" contenteditable="true"
+                                            data-placeholder="Notes">{{
+                                            ebook.metadata.notes }}</div>
                                     </div>
-                                    <div class="ebook-category editable" contenteditable="true"
-                                        data-placeholder="Category">
-                                        {{
-                                        ebook.metadata.category }}</div>
-                                    <!-- </div> -->
-
-                                    <div class="ebook-notes editable" contenteditable="true" data-placeholder="Notes">{{
-                                        ebook.metadata.notes }}</div>
                                 </div>
                                 <div class="ebook-actions">
                                     <div class="has-background-black-ter p-4  is-flex is-justify-content-space-between"
                                         style="border-radius: 6px;">
                                         <a href="{{ url_for('download', rel_path=ebook.relative_path) }}"
-                                            class="button is-small is-link ">Download</a>
+                                            class="button is-small is-link" title="Download">
+                                            <span class="material-icons" style="font-size: 16px;">download</span>
+                                        </a>
                                         <span class="file-info" style="flex-shrink:0;display:flex;align-items:center;">
                                             {% if ebook.file_ext == 'pdf' %}
                                             <span class="material-icons" title="PDF"
@@ -277,15 +310,7 @@
 
                     // Only use the category name, not the count
                     var categoryText = link.childNodes[0].nodeType === Node.TEXT_NODE ? link.childNodes[0].textContent.trim() : link.textContent.trim();
-                    var cards = document.querySelectorAll('.ebook-card');
-                    cards.forEach(function (card) {
-                        var cardCategory = card.querySelector('.ebook-category')?.textContent.trim() || '';
-                        if (categoryText === 'All' || cardCategory === categoryText) {
-                            card.style.display = '';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
+                    filterCards(categoryText, 'category');
                 });
             });
         });
@@ -313,28 +338,60 @@
             if (searchBox) {
                 searchBox.addEventListener('input', function () {
                     var query = searchBox.value.trim().toLowerCase();
-                    var cards = document.querySelectorAll('.ebook-card');
-                    cards.forEach(function (card) {
-                        var title = card.querySelector('.ebook-title')?.textContent.trim().toLowerCase() || '';
-                        var author = card.querySelector('.ebook-author')?.textContent.trim().toLowerCase() || '';
-                        var category = card.querySelector('.ebook-category')?.textContent.trim().toLowerCase() || '';
-                        var notes = card.querySelector('.ebook-notes')?.textContent.trim().toLowerCase() || '';
-                        var date = card.querySelector('.ebook-date')?.textContent.trim().toLowerCase() || '';
-                        if (
-                            title.includes(query) ||
-                            author.includes(query) ||
-                            category.includes(query) ||
-                            notes.includes(query) ||
-                            date.includes(query)
-                        ) {
-                            card.style.display = '';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
+                    filterCards(query, 'search');
                 });
             }
         });
+    </script>
+    <script>
+        // Global filter state
+        var currentSearchQuery = '';
+        var currentCategoryFilter = 'All';
+
+        // Centralized filtering function that works with view modes
+        function filterCards(query, type) {
+            // Update the appropriate filter state
+            if (type === 'search') {
+                currentSearchQuery = query;
+            } else if (type === 'category') {
+                currentCategoryFilter = query;
+            }
+
+            var cards = document.querySelectorAll('.ebook-card');
+
+            cards.forEach(function (card) {
+                var searchMatch = true;
+                var categoryMatch = true;
+
+                // Check search criteria
+                if (currentSearchQuery !== '') {
+                    var title = card.querySelector('.ebook-title')?.textContent.trim().toLowerCase() || '';
+                    var author = card.querySelector('.ebook-author')?.textContent.trim().toLowerCase() || '';
+                    var category = card.querySelector('.ebook-category')?.textContent.trim().toLowerCase() || '';
+                    var notes = card.querySelector('.ebook-notes')?.textContent.trim().toLowerCase() || '';
+                    var date = card.querySelector('.ebook-date')?.textContent.trim().toLowerCase() || '';
+
+                    searchMatch = title.includes(currentSearchQuery) ||
+                        author.includes(currentSearchQuery) ||
+                        category.includes(currentSearchQuery) ||
+                        notes.includes(currentSearchQuery) ||
+                        date.includes(currentSearchQuery);
+                }
+
+                // Check category criteria
+                if (currentCategoryFilter !== 'All') {
+                    var cardCategory = card.querySelector('.ebook-category')?.textContent.trim() || '';
+                    categoryMatch = cardCategory === currentCategoryFilter;
+                }
+
+                // Show card only if both search and category criteria are met
+                if (searchMatch && categoryMatch) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
     </script>
     <script>
         // Theme switching logic
@@ -351,6 +408,50 @@
         (function () {
             var theme = localStorage.getItem('theme') || 'dark';
             setTheme(theme);
+        })();
+    </script>
+    <script>
+        // View switching logic
+        function setView(view) {
+            const ebookList = document.getElementById('ebookList');
+            if (!ebookList) return;
+
+            // Remove existing view classes
+            ebookList.classList.remove('compact-view', 'full-view');
+
+            // Add the new view class
+            if (view === 'compact') {
+                ebookList.classList.add('compact-view');
+                // Reset any individually expanded cards
+                document.querySelectorAll('.ebook-card.expanded').forEach(card => {
+                    card.classList.remove('expanded');
+                });
+            } else {
+                ebookList.classList.add('full-view');
+            }
+
+            localStorage.setItem('view', view);
+        }
+
+        // Initialize card info button functionality
+        function initializeCardInfoButtons() {
+            document.querySelectorAll('.card-info-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const card = button.closest('.ebook-card');
+                    if (card) {
+                        card.classList.toggle('expanded');
+                    }
+                });
+            });
+        }
+
+        // On load, set view from localStorage or default to full
+        (function () {
+            var view = localStorage.getItem('view') || 'full';
+            setView(view);
         })();
     </script>
     <script>
@@ -412,15 +513,7 @@
 
                             // Only use the category name, not the count
                             var categoryText = link.childNodes[0].nodeType === Node.TEXT_NODE ? link.childNodes[0].textContent.trim() : link.textContent.trim();
-                            var cards = document.querySelectorAll('.ebook-card');
-                            cards.forEach(function (card) {
-                                var cardCategory = card.querySelector('.ebook-category')?.textContent.trim() || '';
-                                if (categoryText === 'All' || cardCategory === categoryText) {
-                                    card.style.display = '';
-                                } else {
-                                    card.style.display = 'none';
-                                }
-                            });
+                            filterCards(categoryText, 'category');
                         });
 
                         // Restore the previously selected category
@@ -632,6 +725,20 @@
                 dropdown.style.display = 'none';
                 settingsBtn.setAttribute('aria-expanded', 'false');
             });
+
+            // View switching event listeners
+            document.getElementById('setCompactView')?.addEventListener('click', function (e) {
+                e.preventDefault();
+                setView('compact');
+                dropdown.style.display = 'none';
+                settingsBtn.setAttribute('aria-expanded', 'false');
+            });
+            document.getElementById('setFullView')?.addEventListener('click', function (e) {
+                e.preventDefault();
+                setView('full');
+                dropdown.style.display = 'none';
+                settingsBtn.setAttribute('aria-expanded', 'false');
+            });
         }
 
         // Mobile hamburger menu functionality
@@ -699,6 +806,7 @@
             attachMetadataAutoSave();
             initializeSettings();
             initializeHamburgerMenu();
+            initializeCardInfoButtons();
         });
     </script>
 </body>

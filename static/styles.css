@@ -476,3 +476,45 @@
 #hamburgerBtn button .material-icons {
   font-size: 18px !important;
 }
+
+/* Compact view styles */
+.compact-view .ebook-metadata {
+  display: none;
+}
+
+.compact-view .card-info-btn {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.compact-view .card-info-btn:hover {
+  opacity: 1;
+  color: #fff !important;
+}
+
+.card-info-btn {
+  transition: all 0.2s ease;
+}
+
+.card-info-btn:hover {
+  color: #fff !important;
+  transform: scale(1.1);
+}
+
+/* Individual card expanded state */
+.ebook-card.expanded .ebook-metadata {
+  display: block !important;
+}
+
+.ebook-metadata {
+  transition: all 0.3s ease;
+}
+
+/* Compact view card sizing adjustments */
+.compact-view .ebook-card {
+  min-height: auto;
+}
+
+.compact-view .ebook-card .card-content {
+  padding-bottom: 1rem;
+}
