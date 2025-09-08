@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ebook Library</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bulma.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
@@ -30,21 +31,28 @@
 </head>
 
 <body class="dark-theme">
-    <nav class="navbar is-dark has-background-black-ter" role="navigation" aria-label="main navigation"
+    <!-- NavBar -->
+    <nav class="navbar is-dark has-background-warning" role="navigation" aria-label="main navigation"
         style="padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 1rem;">
+
+        <!-- Title -->
         <div class="navbar-brand">
-            <span class="navbar-item has-text-weight-bold is-size-4">Ebook Library</span>
+            <span class="material-icons title-icon">book</span>
+            <span class="navbar-item has-text-black has-text-weight-bold is-size-4">Ebook Library</span>
         </div>
+
+        <!-- Show SideBar -->
         <div class="navbar-end">
             <div class="navbar-item" style="display: none;" id="hamburgerBtn">
-                <button class="button is-light" title="Menu" aria-haspopup="true" aria-expanded="false">
+                <button class="button is-warning" title="Menu" aria-haspopup="true" aria-expanded="false">
                     <span class="material-icons">menu</span>
                 </button>
             </div>
-            <div class="navbar-item has-dropdown" style="position: relative;">
-                <button class="button is-light" id="settingsBtn" title="Settings" aria-haspopup="true"
-                    aria-expanded="false">
 
+            <!-- Settings NavBar Button -->
+            <div class="navbar-item is-inline-block-mobile has-text-black has-dropdown" style="position: relative;">
+                <button class="button is-warning" id="settingsBtn" title="Settings" aria-haspopup="true"
+                    aria-expanded="false">
                     <span class="material-icons">settings</span>
                 </button>
                 <div id="settingsDropdown" class="dropdown-menu"
@@ -130,13 +138,16 @@
                         </a>
                     </div>
                 </div>
+
             </div>
         </div>
     </nav>
 
+
     <!-- Mobile sidebar overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <!-- SideBar -->
     <section class="section has-background-dark has-text-light" style="min-height:100vh;">
         <div class="container is-fluid">
             <div class="columns is-gapless">
