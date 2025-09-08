@@ -25,7 +25,7 @@
 </head>
 
 <body class="dark-theme">
-    <nav class="navbar is-dark" role="navigation" aria-label="main navigation"
+    <nav class="navbar is-dark has-background-black-ter" role="navigation" aria-label="main navigation"
         style="padding-left: 1.5rem; padding-right: 1.5rem; padding-top: 1rem;">
         <div class="navbar-brand">
             <span class="navbar-item has-text-weight-bold is-size-4">Ebook Library</span>
@@ -115,8 +115,8 @@
         <div class="container is-fluid">
             <div class="columns is-gapless">
                 <!-- Sidebar -->
-                <div id="sidebar" class="column is-2 p-4 px-4 mx-4 has-background-black-ter">
-                    <div class="pl-2 pr-2">
+                <div id="sidebar" class="column is-2 has-background-black-ter">
+                    <div class="pl-3 pr-3">
                         <h2 class="title is-5 has-text-light mb-3 mt-4">
                             <span class="material-icons"
                                 style="font-size: 20px; vertical-align: middle; margin-right: 8px;">search</span>
@@ -171,7 +171,7 @@
                 </div>
 
                 <!-- Main Content -->
-                <div id="mainContent" class="column is-10 p-4">
+                <div id="mainContent" class="has-background-dark column is-10 p-4">
 
                     {% with messages=get_flashed_messages() %}
 
@@ -189,14 +189,14 @@
 
                     {% endwith %}
 
-                    <div id="ebookList">
+                    <div class="has-background-dark" id="ebookListMain">
                         <div id="ebookList" class="ebook-list-flex"
                             style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
                             {% for ebook in ebooks %}
                             <div class="card ebook-card mb-4 has-background-black-ter"
                                 data-code="{{ ebook.metadata.code }}"
                                 style="flex: 1 1 320px; max-width: 32%; min-width: 280px;">
-                                <div class="card-content ebook-info has-background-black-ter has-text-light"
+                                <div class="card-content has-background-black-ter has-text-light"
                                     style="border-radius: 8px;">
                                     <div style="display:flex;align-items:center;gap:8px;">
                                         <div class="ebook-title editable" contenteditable="true"
@@ -220,11 +220,11 @@
                                     <div class="ebook-notes editable" contenteditable="true" data-placeholder="Notes">{{
                                         ebook.metadata.notes }}</div>
                                 </div>
-                                <div class="ebook-actions mt-2">
-                                    <div class="has-background-black-ter p-2 is-flex is-justify-content-space-between"
+                                <div class="ebook-actions">
+                                    <div class="has-background-black-ter p-4  is-flex is-justify-content-space-between"
                                         style="border-radius: 6px;">
                                         <a href="{{ url_for('download', rel_path=ebook.relative_path) }}"
-                                            class="button is-small is-link">Download</a>
+                                            class="button is-small is-link ">Download</a>
                                         <span class="file-info" style="flex-shrink:0;display:flex;align-items:center;">
                                             {% if ebook.file_ext == 'pdf' %}
                                             <span class="material-icons" title="PDF"

@@ -61,6 +61,8 @@
   background-color: #f5f5f5 !important;
   border-color: #dbdbdb !important;
   color: #363636 !important;
+  padding: 0.5rem !important;
+  height: auto !important;
 }
 
 #settingsBtn:hover {
@@ -73,6 +75,10 @@
   background-color: #e8e8e8 !important;
   border-color: #dbdbdb !important;
   color: #363636 !important;
+}
+
+#settingsBtn .material-icons {
+  font-size: 18px !important;
 }
 
 /* Category selection styles */
@@ -93,6 +99,95 @@
   padding-left: 12px;
 }
 
+/* Ebook card layout - actions stick to bottom */
+.ebook-card {
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+}
+
+.ebook-info {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ebook-actions {
+  margin-top: auto !important;
+}
+
+/* Editable field styling */
+.editable {
+  border-radius: 3px;
+  padding: 2px 4px;
+  margin: 1px 0;
+  transition: all 0.2s ease;
+  cursor: text;
+  position: relative;
+}
+
+.editable:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  outline: 1px dashed rgba(255, 255, 255, 0.3);
+}
+
+.editable:focus {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  outline: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Light theme editable fields */
+.light-theme .editable:hover {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+  outline: 1px dashed rgba(0, 0, 0, 0.2);
+}
+
+.light-theme .editable:focus {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  outline: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+/* Add edit icon on hover for better UX */
+.editable::after {
+  content: "✎";
+  position: absolute;
+  right: -18px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.editable:hover::after {
+  opacity: 1;
+}
+
+.light-theme .editable::after {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* Placeholder text for empty editable fields */
+.editable:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  pointer-events: none;
+}
+
+.light-theme .editable:empty::before {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* Hide placeholder when field is focused (even if empty) */
+.editable:focus::before {
+  display: none;
+}
+
+/* Custom scrollbar for webkit browsers */
+
 /* Light theme styles */
 .light-theme {
   background-color: #ffffff !important;
@@ -100,7 +195,7 @@
 }
 
 .light-theme .navbar {
-  background-color: #f5f5f5 !important;
+  background-color: #f8f9fa !important; /* Match sidebar background in light theme */
 }
 
 .light-theme .section {
@@ -199,8 +294,129 @@
   color: #5a5a5a !important;
 }
 
+/* Fixed sidebar with scrollable content */
+.navbar {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  /* background-color: #262626 !important; Match Bulma's black-ter color */
+}
+
+.columns {
+  height: calc(100vh - 80px); /* Subtract navbar height */
+  overflow: hidden;
+  margin-top: 80px; /* Push content below fixed navbar */
+}
+
+#sidebar {
+  position: fixed !important;
+  top: 80px; /* Below navbar */
+  left: 0;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10;
+}
+
+#mainContent {
+  margin-left: calc(16.666667% + 2rem); /* Account for sidebar width + margins */
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 1rem;
+  margin-top: 1rem !important;
+}
+
+/* Add top margin to the flex container that holds the cards */
+.ebook-list-flex {
+  margin-top: 1rem !important;
+}
+
+/* Remove the incorrect selectors */
+
+/* Custom scrollbar for webkit browsers */
+#sidebar::-webkit-scrollbar,
+#mainContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+#sidebar::-webkit-scrollbar-track,
+#mainContent::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+#sidebar::-webkit-scrollbar-thumb,
+#mainContent::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover,
+#mainContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Light theme scrollbar */
+.light-theme #sidebar::-webkit-scrollbar-track,
+.light-theme #mainContent::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.light-theme #sidebar::-webkit-scrollbar-thumb,
+.light-theme #mainContent::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.light-theme #sidebar::-webkit-scrollbar-thumb:hover,
+.light-theme #mainContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
 /* Mobile responsive sidebar */
 @media (max-width: 768px) {
+  /* Keep navbar fixed on mobile too */
+  .navbar {
+    position: fixed !important;
+    top: 0;
+    z-index: 100;
+  }
+  
+  /* Reset fixed positioning for mobile content */
+  .columns {
+    height: auto !important;
+    overflow: visible !important;
+    margin-top: 80px !important; /* Account for fixed navbar */
+  }
+  
+  #sidebar {
+    position: fixed !important;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease-in-out;
+    margin: 0 !important;
+    padding-top: 80px;
+    overflow-y: auto;
+  }
+  
+  #sidebar.show {
+    left: 0;
+  }
+  
+  #mainContent {
+    width: 100% !important;
+    flex: none !important;
+    margin-left: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding-right: 1rem;
+  }
+  
   /* Navbar mobile fixes */
   .navbar {
     flex-wrap: nowrap !important;
@@ -219,27 +435,6 @@
   
   #hamburgerBtn {
     display: block !important;
-  }
-  
-  #sidebar {
-    position: fixed !important;
-    top: 0;
-    left: -100%;
-    width: 280px;
-    height: 100vh;
-    z-index: 1000;
-    transition: left 0.3s ease-in-out;
-    margin: 0 !important;
-    padding-top: 80px; /* Account for navbar */
-  }
-  
-  #sidebar.show {
-    left: 0;
-  }
-  
-  #mainContent {
-    width: 100% !important;
-    flex: none !important;
   }
   
   .columns {
@@ -268,10 +463,16 @@
   background-color: #f5f5f5 !important;
   border-color: #dbdbdb !important;
   color: #363636 !important;
+  padding: 0.5rem !important;
+  height: auto !important;
 }
 
 #hamburgerBtn button:hover {
   background-color: #eeeeee !important;
   border-color: #dbdbdb !important;
   color: #363636 !important;
+}
+
+#hamburgerBtn button .material-icons {
+  font-size: 18px !important;
 }
